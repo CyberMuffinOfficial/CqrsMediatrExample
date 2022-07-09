@@ -21,6 +21,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand, Product> // 
     public async Task<Product> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         await _fakeDataStore.AddProduct(request.Product);
+        // can also publish the notification here
         return request.Product; // need to return this
     }
 }

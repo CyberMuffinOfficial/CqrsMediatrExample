@@ -1,5 +1,6 @@
 ﻿using CqrsMediatrExample.Commands;
 using CqrsMediatrExample.Entities;
+using CqrsMediatrExample.Notifications;
 using CqrsMediatrExample.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,12 @@ namespace CqrsMediatrExample.Controllers
     {
         //private readonly IMediator _mediator;
         private readonly ISender _sender;
+        private readonly IPublisher _publisher; // this is needed in order to publish notifications
 
-        public ProductsController(ISender sender)
+        public ProductsController(ISender sender, IPublisher publisher)
         {
             _sender = sender;
+            _publisher = publisher;
         }
 
         [HttpGet]
@@ -37,6 +40,8 @@ namespace CqrsMediatrExample.Controllers
         public async Task<ActionResult> AddProduct([FromBody] Product product)
         {
             var productToReturn = await _sender.Send(new AddProductCommand(product));
+
+            await _publisher.Publish(new ProductAddedNotification(productToReturn)); // can also do this in the handler for AddProductCommand
             //return StatusCode(201);
             return CreatedAtRoute("GetProductById", new { id = productToReturn.Id }, productToReturn);
         }
