@@ -26,7 +26,7 @@ namespace CqrsMediatrExample.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id :int", Name = "GetProductById")]
+        [HttpGet("{id:int}", Name = "GetProductById")]
         public async Task<ActionResult> GetProductById(int id)
         {
             var product = await _sender.Send(new GetProductByIdQuery(id));
@@ -36,8 +36,9 @@ namespace CqrsMediatrExample.Controllers
         [HttpPost]
         public async Task<ActionResult> AddProduct([FromBody] Product product)
         {
-            await _sender.Send(new AddProductCommand(product));
-            return StatusCode(201);
+            var productToReturn = await _sender.Send(new AddProductCommand(product));
+            //return StatusCode(201);
+            return CreatedAtRoute("GetProductById", new { id = productToReturn.Id }, productToReturn);
         }
 
 

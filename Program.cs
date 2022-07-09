@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddSingleton<FakeDataStore>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(); // options => options.SuppressAsyncSuffixInActionNames = false
 
 var app = builder.Build();
 
