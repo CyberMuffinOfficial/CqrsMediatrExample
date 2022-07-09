@@ -1,3 +1,4 @@
+using CqrsMediatrExample.Behaviors;
 using CqrsMediatrExample.Persistence;
 using MediatR;
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddSingleton<FakeDataStore>();
+builder.Services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>)); // we use <,> to specify that the behavior can be used for any generic type paramters
 
 builder.Services.AddControllers(); // options => options.SuppressAsyncSuffixInActionNames = false
 
@@ -36,4 +38,8 @@ If we want to handle a single request with multiple handlers, thats where notifi
 (multiple independent operations that have to occur after an event)
 So we will update the addproduct to publish a notification and have it handled by 2 mroe handlers
 Now when we add a product it publishes a notification that triggers 2 more events, and the publisher has no idea
+
+Mediatr Behaviors are similar to asp.net middleware. they accept a request, perform some action and then optionally pass on the request.
+Create Behaviors folder and LoggingBehavior class. Then need to register it in Program.cs
+Theres no need to modify our existing code. simply add a new behavior, implement the IPipelineBehavior interface, and wire it up in Program.cs. very cool.
  */
