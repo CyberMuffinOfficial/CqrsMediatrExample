@@ -23,5 +23,7 @@ public class FakeDataStore
     }
 
     public async Task<IEnumerable<Product>> GetAllProducts() => await Task.FromResult(_products);
+
+    public async Task<Product> GetProductById(int id) => await Task.FromResult(_products.Single(p => p.Id == id));
 }
 

@@ -1,4 +1,6 @@
-﻿using CqrsMediatrExample.Queries;
+﻿using CqrsMediatrExample.Commands;
+using CqrsMediatrExample.Entities;
+using CqrsMediatrExample.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +25,21 @@ namespace CqrsMediatrExample.Controllers
             var products = await _sender.Send(new GetProductsQuery());
             return Ok(products);
         }
+
+        [HttpGet("{id :int", Name = "GetProductById")]
+        public async Task<ActionResult> GetProductById(int id)
+        {
+            var product = await _sender.Send(new GetProductByIdQuery(id));
+            return Ok(product);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddProduct([FromBody] Product product)
+        {
+            await _sender.Send(new AddProductCommand(product));
+            return StatusCode(201);
+        }
+
 
     }
 }
